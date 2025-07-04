@@ -5,16 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ask Your Question</title>
     <link rel="manifest" href="manifest.json">
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(function(registration) {
-                    console.log('Service Worker registered successfully.');
-                }).catch(function(error) {
-                    console.error('Service Worker registration failed:', error);
-                });
-        }
-    </script>
+    <script> if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); } </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -57,17 +48,6 @@
         @keyframes marquee {
             from { transform: translateX(100%); }
             to { transform: translateX(-100%); }
-        }
-        /* Promotional text ke liye naya style */
-        .promo-text {
-            display: block;
-            font-style: italic;
-            font-size: 0.875rem;
-            color: #4f46e5;
-            margin-bottom: 8px;
-            padding: 8px;
-            background-color: #e0e7ff;
-            border-radius: 6px;
         }
     </style>
 </head>
@@ -220,18 +200,9 @@
                     text = result.candidates[0].content.parts[0].text;
                 }
                 document.getElementById(loaderId).remove();
-                
-                // Jawab ko process karke promotional message aur book reference ko alag se handle karna
-                const promoRegex = /\(\*To gain more knowledge,.*?below!\*\)\s*\n\n/s;
-                const promoMatch = text.match(promoRegex);
-                const promoText = promoMatch ? `<span class="promo-text">${promoMatch[0].replace(/\n/g, '<br>')}</span>` : '';
-                
-                let mainText = text.replace(promoRegex, '');
-                mainText = mainText.replace(/Book Reference:/g, '<strong>Book Reference:</strong>');
-                
-                const modelHtml = `<div class="flex justify-start"><div class="answer-bubble p-3 rounded-lg max-w-xs md:max-w-md">${promoText}${mainText.replace(/\n/g, '<br>')}</div></div>`;
+                // BOOK REFERENCE KO BOLD KARNE WALA CODE ADD KAR DIYA GAYA HAI
+                const modelHtml = `<div class="flex justify-start"><div class="answer-bubble p-3 rounded-lg max-w-xs md:max-w-md">${text.replace(/\n/g, '<br>').replace(/Book Reference:/g, '<strong>Book Reference:</strong>')}</div></div>`;
                 answerContainer.innerHTML += modelHtml;
-
                 const userTurn = { role: "user", parts: [] };
                 if (userQuestion) userTurn.parts.push({text: userQuestion});
                 if (imageData) {
