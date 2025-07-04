@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask Your Question</title>
+    <link rel="manifest" href="manifest.json">
+    <script> if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); } </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .answer-bubble { background-color: #eef2ff; }
+        .question-bubble { background-color: #f3f4f6; }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="container mx-auto max-w-3xl p-4 sm:p-6 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 tracking-tight">ask your question</h1>
+            <p class="text-sm text-gray-500 mt-2 font-medium">powered by - AR SUGGESTION (mr.Arun)</p>
+        </header>
+        <main>
+            <div id="answerContainer" class="mb-6 bg-white p-4 rounded-2xl shadow-lg space-y-4 min-h-[100px]"></div>
+            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                <textarea id="questionInput" class="w-full h-24 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 resize-none" placeholder="Yahan apna sawaal likhein ya image upload karein..."></textarea>
+                <div class="flex justify-between items-center mt-4">
+                    <div class="flex items-center space-x-2">
+                        <button id="imageUploadBtn" class="flex items-center space-x-2 text-sm font-medium text-gray-600 hover:text-indigo-600 p-2 rounded-md bg-gray-100 hover:bg-gray-200 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" /></svg>
+                            <span>Upload Image</span>
+                        </button>
+                        <input type="file" id="imageUploadInput" class="hidden" accept="image/*">
+                        <div class="relative">
+                            <button id="discussionToggle" class="flex items-center space-x-2 text-sm font-medium text-gray-600 hover:text-indigo-600 p-2 rounded-md bg-gray-100 hover:bg-gray-200 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" /><path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h1a2 2 0 002-2V9a2 2 0 00-2-2h-1z" /></svg>
+                                <span>Continue Discussion</span>
+                            </button>
+                            <div id="discussionTooltip" class="hidden absolute bottom-full mb-2 w-64 bg-black text-white text-xs rounded py-1 px-2 text-center">Isse ON rakhein taaki AI pichle sawaal-jawab ko yaad rakhe. Naye topic ke liye isse OFF kar dein.</div>
+                        </div>
+                    </div>
+                    <button id="getAnswerBtn" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700 transition shadow-md">GET ANSWER</button>
+                </div>
+                 <div id="imagePreviewContainer" class="mt-4 hidden"><img id="imagePreview" class="max-h-40 rounded-lg"><button id="removeImageBtn" class="text-red-500 text-xs mt-1">Remove Image</button></div>
+            </div>
+        </main>
+        <section class="mt-12 text-center bg-white p-6 rounded-2xl shadow-lg">
+             <img src="https://i.ibb.co/5W5d06gk/IMG-20250629-000315.jpg" alt="Learn Smarter, Master Medical Concepts, Your Medical Study Buddy" class="w-full h-auto rounded-lg mb-6 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/800x250/7c3aed/ffffff?text=Books+Collection';">
+            <a href="https://superprofile.bio/vp/6860b6f271e3d80014e08e54" target="_blank" class="inline-block bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">Read Your Favorite Book</a>
+            <p class="text-xs text-gray-600 mt-3 max-w-md mx-auto">These books can help you gain knowledge, enhance your skills, and crack interviews. Check them out now.</p>
+        </section>
+        <footer class="mt-12 text-center text-xs text-gray-500 space-y-4">
+            <p class="italic">Disclaimer: This AI is for educational and informational purposes only. It is not a substitute for professional medical advice. Please be respectful and maintain a friendly environment.</p>
+             <div class="flex justify-center items-center space-x-2">
+                <svg class="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                <a href="mailto:digitalarun60@gmail.com" class="text-gray-600 hover:text-indigo-600">Contact: digitalarun60@gmail.com</a>
+            </div>
+            <p class="font-semibold">&copy; 2025 Ar. Suggestion (mr.Arun). All Rights Reserved.</p>
+        </footer>
+    </div>
+    <script>
+        const getAnswerBtn = document.getElementById('getAnswerBtn');
+        const questionInput = document.getElementById('questionInput');
+        const answerContainer = document.getElementById('answerContainer');
+        const imageUploadBtn = document.getElementById('imageUploadBtn');
+        const imageUploadInput = document.getElementById('imageUploadInput');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+        const discussionToggle = document.getElementById('discussionToggle');
+        const discussionTooltip = document.getElementById('discussionTooltip');
+        let chatHistory = [];
+        let imageData = null;
+        let isDiscussionMode = false;
+        imageUploadBtn.addEventListener('click', () => imageUploadInput.click());
+        imageUploadInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imageData = e.target.result;
+                    imagePreview.src = imageData;
+                    imagePreviewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        removeImageBtn.addEventListener('click', () => {
+            imageData = null;
+            imageUploadInput.value = null;
+            imagePreviewContainer.classList.add('hidden');
+        });
+        discussionToggle.addEventListener('click', () => {
+            isDiscussionMode = !isDiscussionMode;
+            discussionToggle.classList.toggle('bg-indigo-200');
+            discussionToggle.classList.toggle('text-indigo-800');
+            discussionTooltip.classList.toggle('hidden');
+            setTimeout(() => discussionTooltip.classList.add('hidden'), 3000);
+            if (!isDiscussionMode) { chatHistory = []; }
+        });
+        getAnswerBtn.addEventListener('click', async () => {
+            const userQuestion = questionInput.value.trim();
+            if (!userQuestion && !imageData) {
+                alert('Kripya ek sawal likhein ya image upload karein.');
+                return;
+            }
+            if (!isDiscussionMode) {
+                chatHistory = [];
+                answerContainer.innerHTML = '';
+            }
+            let userHtml = `<div class="flex justify-end"><div class="question-bubble p-3 rounded-lg max-w-xs md:max-w-md">`;
+            if (imageData) { userHtml += `<img src="${imageData}" class="max-h-40 rounded-lg mb-2">`; }
+            if (userQuestion) { userHtml += `<p>${userQuestion}</p>`; }
+            userHtml += `</div></div>`;
+            answerContainer.innerHTML += userHtml;
+            const loaderId = 'loader-' + Date.now();
+            answerContainer.innerHTML += `<div id="${loaderId}" class="flex justify-start"><div class="answer-bubble p-3 rounded-lg"><div class="loader"></div></div></div>`;
+            answerContainer.scrollTop = answerContainer.scrollHeight;
+            try {
+                const response = await fetch('/askAI', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ question: userQuestion, image: imageData, history: chatHistory }),
+                });
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: 'An unknown server error occurred.' }));
+                    throw new Error(errorData.error || 'Server returned an error.');
+                }
+                const result = await response.json();
+                let text = 'Maaf kijiye, mujhe iska jawab nahi mil saka.';
+                if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    text = result.candidates[0].content.parts[0].text;
+                }
+                document.getElementById(loaderId).remove();
+                const modelHtml = `<div class="flex justify-start"><div class="answer-bubble p-3 rounded-lg max-w-xs md:max-w-md">${text.replace(/\n/g, '<br>')}</div></div>`;
+                answerContainer.innerHTML += modelHtml;
+                const userTurn = { role: "user", parts: [] };
+                if (userQuestion) userTurn.parts.push({text: userQuestion});
+                if (imageData) userTurn.parts.push({inline_data: { mime_type: imageData.split(';')[0].split(':')[1], data: imageData.split(",")[1]}});
+                chatHistory.push(userTurn);
+                chatHistory.push({ role: "model", parts: [{ text: text }] });
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById(loaderId).remove();
+                answerContainer.innerHTML += `<div class="flex justify-start"><div class="answer-bubble p-3 rounded-lg text-red-500">Server abhi busy hai. Kripya kuch der baad koshish karein.</div></div>`;
+            } finally {
+                questionInput.value = '';
+                imageData = null;
+                imageUploadInput.value = null;
+                imagePreviewContainer.classList.add('hidden');
+                answerContainer.scrollTop = answerContainer.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
