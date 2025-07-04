@@ -1,0 +1,16 @@
+{
+  &quot;name&quot;: &quot;Ask Your Question? - AI Buddy&quot;,
+  &quot;short_name&quot;: &quot;AI Buddy&quot;,
+  &quot;start_url&quot;: &quot;.&quot;,
+  &quot;display&quot;: &quot;standalone&quot;,
+  &quot;background_color&quot;: &quot;#f0f4f8&quot;,
+  &quot;theme_color&quot;: &quot;#3b82f6&quot;,
+  &quot;description&quot;: &quot;Your personal AI study buddy!&quot;,
+  &quot;icons&quot;: [
+    {
+      &quot;src&quot;: &quot;icon-512x512.png&quot;,
+      &quot;sizes&quot;: &quot;512x512&quot;,
+      &quot;type&quot;: &quot;image/png&quot;
+    }
+  ]
+}
